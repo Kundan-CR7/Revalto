@@ -16,8 +16,7 @@ const app = express()
 const server = http.createServer(app);
 
 const allowedOrigins = [
-    "http://localhost:5173",
-    "https://revalto.vercel.app"
+    "https://revalto-6nxt.vercel.app"
 ];
 
 const io = new Server(server, {
@@ -25,7 +24,7 @@ const io = new Server(server, {
         origin: allowedOrigins,
         credentials: true
     }
-})
+});
 
 io.use(verifySocketToken)
 
