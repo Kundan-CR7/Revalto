@@ -10,6 +10,7 @@ import AddProduct from "./pages/AddProduct.jsx";
 import EditProduct from "./pages/EditProduct.jsx";
 import { SocketProvider } from "./context/SocketContext.jsx"
 import ChatRoom from "./components/ChatRoom.jsx";
+import SearchPage from "./components/Features/SearchBar.jsx";
 
 function App() {
   return (
@@ -24,20 +25,27 @@ function App() {
         <Route path="/add-product" element={<AddProduct />} />
         <Route path="/edit-product/:id" element={<EditProduct />} />
         <Route path="/product/:id" element={<ProductPage />} />
-        <Route path="/chat" element={
-          <SocketProvider>
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-              <ChatRoom />
-            </div>
-          </SocketProvider>
-        }/>
-        <Route path="/chat/:conversationId" element={
-          <SocketProvider>
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-              <ChatRoom />
-            </div>
-          </SocketProvider>
-        }/>
+        <Route path="/search" element={<SearchPage />} />
+        <Route
+          path="/chat"
+          element={
+            <SocketProvider>
+              <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+                <ChatRoom />
+              </div>
+            </SocketProvider>
+          }
+        />
+        <Route
+          path="/chat/:conversationId"
+          element={
+            <SocketProvider>
+              <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+                <ChatRoom />
+              </div>
+            </SocketProvider>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

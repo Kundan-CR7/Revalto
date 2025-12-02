@@ -15,9 +15,9 @@ dotenv.config()
 const app = express()
 const server = http.createServer(app);
 
-const allowedOrigins = [
-    "https://revalto-6nxt.vercel.app"
-];
+const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173"].filter(
+  Boolean
+);
 
 const io = new Server(server, {
     cors: {
