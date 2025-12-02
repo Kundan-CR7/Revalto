@@ -95,7 +95,7 @@ export const loginUser = async (req, res) => {
       secure: true,
       sameSite: "None",
       path : "/",
-      maxAge: 1 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
     });
                                                                             
     res.cookie("refreshToken", refreshToken, {
@@ -137,7 +137,7 @@ export const renewAccessToken = (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "None",
-      maxAge: 1 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
     });
     return res.json({ message: "Token refreshed successfully" });
   });
