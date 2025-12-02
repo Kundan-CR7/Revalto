@@ -71,7 +71,7 @@ export default function Posts({ activeCategory = "All" }) {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       <h2 className="text-2xl font-semibold mb-6">Recent Products</h2>
-      <div class="h-px bg-gray-400 w-2/5 p-1 mb-5"></div>
+      <div className="h-px bg-gray-400 w-2/5 p-1 mb-5"></div>
 
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">

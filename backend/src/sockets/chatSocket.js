@@ -1,8 +1,17 @@
 import { prisma } from "../../DB/config.js";
 
+const userSocketMap = {}; // {userId: socketId}
+
 export default function chatSocket(io) {
   io.on("connection", (socket) => {
     console.log(`⚡ User connected: ${socket.id} (userId: ${socket.user?.id})`);
+
+    const userId = socket.user?.id;
+    if (userId) {
+      userSocketMap[userId] = socket.id;
+      // Broadcast online users to all clients
+      io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    }
 
     // Join a conversation room
     socket.on("joinConversation", (conversationId) => {
@@ -64,6 +73,10 @@ export default function chatSocket(io) {
     // Handle user disconnecting
     socket.on("disconnect", () => {
       console.log(`❌ User disconnected: ${socket.id}`);
+      if (userId) {
+        delete userSocketMap[userId];
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+      }
     });
   });
 }
