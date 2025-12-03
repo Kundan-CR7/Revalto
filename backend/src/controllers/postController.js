@@ -87,10 +87,7 @@ export const getPosts = async(req,res) => {
 
         if (search) {
           whereClause = {
-            OR: [
-              { itemName: { contains: search, mode: "insensitive" } },
-              { description: { contains: search, mode: "insensitive" } },
-            ],
+              itemName: { contains: search, mode: "insensitive" }
           };
         } else if (category && category !== "All") {
           whereClause = { category };
