@@ -22,7 +22,8 @@ const createPostSchema = z.object({
   ]),
   category: z.enum(["Accessories", "Food", "Electronics", "Beauty", "Fashion"]),
   isAvailable: z.boolean().optional().default(true),
-  isPostedAnonymously: z.boolean().optional().default(true)
+  isPostedAnonymously: z.boolean().optional().default(true),
+  authorId: z.coerce.number().int().positive(),
 });
 
 export const createPost = async (req, res) => {
@@ -35,8 +36,7 @@ export const createPost = async (req, res) => {
             });
         }
 
-        const authorId = req.user.id
-        const { itemName, itemImgUrl, description, originalPrice, secondHandPrice, condition, warrantyRemaining, isAvailable, isPostedAnonymously, category } = validation.data;
+        const { itemName, itemImgUrl, description, originalPrice, secondHandPrice, condition, warrantyRemaining, isAvailable, isPostedAnonymously, authorId, category } = validation.data;
 
 
         const newPost = await prisma.post.create({
@@ -78,24 +78,11 @@ export const getPosts = async(req,res) => {
     try {
         const category = req.query.category || req.params.category;
         // console.log(req.query);
-        const search = req.query.search;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
         
-        let whereClause = {};
-
-        if (search) {
-          whereClause = {
-            OR: [
-              { itemName: { contains: search, mode: "insensitive" } },
-              { description: { contains: search, mode: "insensitive" } },
-            ],
-          };
-        } else if (category && category !== "All") {
-          whereClause = { category };
-        }
-
+        const whereClause = category? {category} : {}
         const posts = await prisma.post.findMany({
           where: whereClause,
           skip: skip,
@@ -187,7 +174,14 @@ export const getPostByAuthorId = async(req,res) => {
             }
         });
 
-        return res.status(200).json(posts || []);
+        if (!posts) {
+            return res.status(404).json({
+                success: false,
+                message: "No Post found",
+            });
+        }
+
+        return res.status(200).json(posts);
     } catch(error) {
         console.error("Error fetching author by ID:", error);
         res.status(500).json({ 
@@ -202,21 +196,7 @@ export const updatePost = async(req,res) => {
         const postId = parseInt(req.params.id)
         if(isNaN(postId)){
             return res.status(400).json({ message: "Invalid post ID" });
-        }
-
-        const existingPost = await prisma.post.findUnique({
-          where: { id: postId },
-        })
-
-        if (!existingPost)
-          return res.status(404).json({ message: "Post not found" });
-
-        if (existingPost.authorId !== req.user.id) {
-          return res
-            .status(403)
-            .json({message: "You are not authorized to update this post" });
-        }
-
+    }
         const validation = createPostSchema.partial().safeParse(req.body)
 
         if(!validation.success) {

@@ -31,7 +31,6 @@ function AuthForm({ className, onSubmit, mode = "login", ...props }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
     try {
       setIsSubmitting(true);
       if (typeof onSubmit === "function") {
@@ -62,30 +61,8 @@ function AuthForm({ className, onSubmit, mode = "login", ...props }) {
         }
       }
     } catch (err) {
+      setError(err.response?.data?.message || "An unknown error occurred.");
       console.error(err);
-
-      const serverResponse = err.response?.data;
-      let displayMessage =
-        serverResponse?.message || "An unknown error occurred.";
-
-      if (serverResponse?.errors) {
-        const validationErrors = serverResponse.errors;
-        const errorMessages = [];
-
-        // Zod is consoling "email": { "_errors": ["Only @adypu.edu.in email addresses are allowed."] }
-        Object.keys(validationErrors).forEach((field) => {
-          const fieldError = validationErrors[field];
-          if (fieldError?._errors?.length > 0) {
-            errorMessages.push(fieldError._errors[0]);
-          }
-        });
-
-        if (errorMessages.length > 0) {
-          displayMessage = errorMessages.join(". ");
-        }
-      }
-
-      setError(displayMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -171,8 +148,8 @@ function AuthForm({ className, onSubmit, mode = "login", ...props }) {
             disabled={isSubmitting}
             aria-busy={isSubmitting}
             className={cn("h-11 hover:shadow-lg active:scale-[0.98] transition-all duration-150 w-full font-medium text-base rounded-lg", isDarkTheme 
-              ? "bg-white text-black hover:bg-gray-100!" 
-              : "bg-gray-900 text-white hover:bg-gray-800!")}
+              ? "bg-white text-black hover:!bg-gray-100" 
+              : "bg-gray-900 text-white hover:!bg-gray-800")}
           >
             {isSubmitting ? (
               <span className="inline-flex items-center gap-2">
@@ -194,8 +171,8 @@ function AuthForm({ className, onSubmit, mode = "login", ...props }) {
             disabled={isGitHubLoading}
             onClick={handleGithub}
             className={cn("h-11 hover:shadow-md active:scale-[0.98] transition-all duration-150 w-full font-medium text-base rounded-lg", isDarkTheme 
-              ? "text-white hover:text-white! border-white/30 hover:bg-white/10 hover:border-white/50" 
-              : "text-gray-900 hover:text-gray-900! border-gray-300 hover:bg-gray-50 hover:border-gray-400")}
+              ? "text-white hover:!text-white border-white/30 hover:bg-white/10 hover:border-white/50" 
+              : "text-gray-900 hover:!text-gray-900 border-gray-300 hover:bg-gray-50 hover:border-gray-400")}
           >
             {isGitHubLoading ? (
               <svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
